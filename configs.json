@@ -1,0 +1,5 @@
+{
+    "SQLITE_NAME" : "main/database/rfnapp.sqlite3",
+    "DEBUG" : "True",
+    "ALLOWED_HOSTS":"127.0.0.1,10.4.0.80,ksl.plant.local"
+}

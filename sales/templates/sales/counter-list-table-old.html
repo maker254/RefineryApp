@@ -1,0 +1,179 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block page-scripts %}
+<script type="text/javascript" src="{% static 'js/loading.js'%}"></script>
+{% endblock %}
+
+{% block content %}
+<script type="text/javascript">
+    $(document).ready(function(){
+        showTime();
+    })
+
+    function checkCounterInitialState(pk){
+        if($('#my-toggle-'+pk).val() == 'True'){
+                $("#my-toggle-"+pk).prop("checked", true);
+                $('.toggle-label').css("transition", "All 0s ease");
+                $('.toggle-handle').css("transition", "All 0s ease");
+            }
+    }
+</script>
+
+<div class="container-fluid">
+    <div class="col-lg-12" style="margin: 0px !important;">
+        
+        <div>
+            <h5 class="text-center" style="margin:auto;" >Counter States as at,  <span id="DigitalCLOCK" class="clock" > </span></h5> 
+            <div style=" margin-top: 5px !important;border: 0px solid #d8dce4 !important; border-radius: 5px !important; max-width: 1000px !important; margin: auto;">
+                <table class="table table-sm table-bordered  table-striped table-hover text-nowrap" style="font-size: 0.85rem !important;  margin-bottom: 0px !important; padding: 2px !important;" >
+                    <thead class="thead-light">
+                        <tr style="line-height: 0.9rem !important; font-size: 0.9rem !important;" >
+                            <th  style="width: 10px !important;">Gate No.</th>
+                            <th  style="min-width:100px !important ">Device</th>
+                            <th  style="min-width:100px !important; ">Ticket</th>
+                            <th colspan="1" style="min-width: 100px !important; ">50kg bags </th>
+                            <th colspan="1" style="min-width: 100px !important; ">25kg bags</th>
+                            <th colspan="1" style="min-width: 100px !important; ">20kg bales</th>
+                            <th colspan="1" style="min-width: 100px !important; "> 6kg bales</th>
+                            <th style="min-width: 100px !important; ">Loaded Qty (kg)</th>
+                            {% if user.is_superuser %}
+                            <th style="width: 30px !important; "> Belt Status</th>
+                            <th style="width: 30px !important;">Close</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>  
+                        {% for item in object_list %}
+                        <tr style="vertical-align: middle !important; line-height: 0.9rem !important;" >
+                            <td class="text-center" style="font-weight: 400; " ><a href="{% url 'sales:counter-update' item.pk %}"> {{item.device.location.conveyor_code}}</a> </td>
+                            <td style="font-weight: 400;"> <a href="{% url 'sales:counter-update' item.pk %}">{{item.device.ip}} </a></td>
+                            <td class="text-center" style="font-weight: 400; "> <a href="{% url 'sales:counter-update' item.pk %}"> {{item.ticket}} </a></td>
+                          <!--  <td class="text-center" style="font-weight: 400; padding-top: 0.9rem !important;"><a href="">{{item.order.quantity}} </a></td> -->
+                            <td class="text-center" style="font-weight: 400; " id="50-live-count"> <span id="50kg-count-{{item.device.location.conveyor_code}}" style="color: rgb(6, 71, 191);"></span>&nbsp;</td>
+                            <td class="text-center" style="font-weight: 400;  display: none;" id="50-live-total"> <span id="50kg-tweight-{{item.device.location.conveyor_code}}" style="color: rgb(6, 71, 191);"> </span></td>
+
+                            <td class="text-center" style="font-weight: 400;" id="25-live-count"> <span id="25kg-count-{{item.device.location.conveyor_code}}" style="color: rgb(6, 71, 191);"></span> </td>
+                            <td class="text-center" style="font-weight: 400;  display: none;" id="25-live-total"> <span id="25kg-tweight-{{item.device.location.conveyor_code}}" style="color: rgb(6, 71, 191);"> </span></td>
+
+
+                            <td class="text-center" style="font-weight: 400;  " id="20-live-count"> <span id="20kg-count-{{item.device.location.conveyor_code}}" style="color: rgb(6, 71, 191);"></span> </td>
+                            <td class="text-center" style="font-weight: 400;  display: none;" id="20-live-total"> <span id="20kg-tweight-{{item.device.location.conveyor_code}}" style="color: rgb(6, 71, 191)"> </span> </td>
+
+                            <td class="text-center" style="font-weight: 400; " id="6-live-count"> <span id="6kg-count-{{item.device.location.conveyor_code}}" style="color: rgb(6, 71, 191)"></span> </td>
+                            <td class="text-center" style="font-weight: 400;  display: none;" id="6-live-total"> <span id="6kg-tweight-{{item.device.location.conveyor_code}}" style="color: rgb(6, 71, 191)"> </span> </td>
+
+                            <td class="text-center" style="font-weight: 400; " > <span id="counter-total-{{item.device.location.conveyor_code}}" style="color: rgb(6, 71, 191)"> </span> </td>
+                            {% if user.is_superuser %}
+                            <td  class="text-center" style="font-weight: 400; max-width: 10px!important;" colspan="1">
+                                <label class="toggle" id="on-off-toggle">
+                                    <input id="my-toggle-{{item.id}}" class="toggle-input" type="checkbox" value="{{item.is_running}}" onclick="setCounter({{item.id}})" onload="checkCounterInitialState({{item.id}}) "/>
+                                    <span class="toggle-label" data-off="OFF" data-on="ON" ></span>
+                                    <span class="toggle-handle"></span> 
+                                </label>
+                                <script type="text/javascript">
+                                    $(function(){checkCounterInitialState("{{item.id}}"); });
+                                </script>
+                            </td>
+                            <td class="text-center">
+                                <form action="{% url 'sales:counter-delete' item.id %}" method="post">
+                                    {% csrf_token %}
+                                    <input id="counterdelete" class="btn btn-warning"{% if object.is_running %} type=" " {% else %} type="submit" {% endif %} value="close" style="max-width: 50px !important; padding: 2px !important; border-radius: 5px !important; font-size: small;"/>
+                                </form>
+                            </td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="13">Toggle Belt Status button to Enable Loading/Packing i.e START/STOP Conveyors</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            {% if user.is_superuser %}
+            <div>
+                <a href="{% url 'sales:counter-create' %}" class="text-center" style="margin-left: 0px !important; "><button class="btn btn" style="color: green !important; " ><strong><span class="fa fa-plus"></span>&nbsp;Add Counter</strong></button></a>
+            </div>
+            {% endif %}
+            
+        </div>   
+    </div>     
+</div>
+
+<script type="text/javascript">
+
+    function setCounter(pk){
+        console.log("attempting ajax request");
+        var toggleState = "OFF";
+        if ($('#my-toggle-'+pk).is(":checked")){
+            toggleState = "ON";
+        }
+        var defaultUrl = "{% url 'sales:start-counter' 1 %}";
+        var dynamicUrl = defaultUrl.replace('1',pk);
+        console.log(dynamicUrl);
+        $.ajax({
+            type: 'GET',
+            url: dynamicUrl, 
+            dataType:"json",
+            data: {
+                'toggleState':toggleState
+                },
+            success: function (data) {
+                console.log(data[0].is_running);
+                if (data[0].is_running == null){
+                    console.log("data is null");
+                    //change togglestate back to initial state
+                    if (toggleState == "ON"){
+                        $("#my-toggle-"+pk).prop("checked", false);
+                    }
+                    if (toggleState == "OFF"){
+                        $("#my-toggle-"+pk).prop("checked", true);
+                    }
+                    alert("!!!Communication Error!!!"); 
+                }
+                // if not valid user, alert the user
+                // if(!response["valid"]){
+                //     alert("GATE Counter Started");
+                // }
+            },
+            error: function (response) {
+                console.log(response);
+                alert("!!Request Failed!!");
+                
+            }
+        }) 
+    }
+    function showTime(){
+      console.log('we are here');
+      var date = new Date();
+      var h = date.getHours(); 
+      var m = date.getMinutes(); 
+      var s = date.getSeconds(); 
+      console.log(date);
+      var session = "AM";
+      
+      if(h == 0){
+          h = 12;
+      }
+      
+      if(h > 12){
+          h = h - 12;
+          session = "PM";
+      }
+      
+      h = (h < 10) ? "0" + h : h;
+      m = (m < 10) ? "0" + m : m;
+      s = (s < 10) ? "0" + s : s;
+      
+      var time = h + ":" + m + ":" + s + " " + session;
+      console.log(time);
+      $("#DigitalCLOCK").html(time) ;
+      console.log('the end');
+      
+      setTimeout(showTime, 1000);
+    }
+</script>
+    
+{% endblock %}

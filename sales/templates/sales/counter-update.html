@@ -1,0 +1,57 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block page-scripts %}
+<script type="text/javascript">
+    function updateCounterError(){
+        alert("!!!ERROR!!! Updating Counter While Counter is ON  NOT Allowed!!! \n First Turn OFF counter to update Order Details"); 
+    }
+</script>
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+    <div class="col-lg-12" style="margin: 0px !important;">
+        <h4 class="text-left" style="margin-top: 50px !important;">Update Loading Plan</h4>
+        <form method="post" action=" " >
+        {% csrf_token %}
+        {{form.errors}}
+        <div class="table-responsive" style="font-size: 16px !important; margin-top: 12px !important;">
+            <table class="table table-sm table-borderless text-nowrap" style="max-width: 600px !important; line-height: 1.5; text-align: left;">
+                <tbody>
+                    <tr>
+                        <td  class="text-left"><strong>Device Ip:</strong></td>
+                        <td>{{object.device.ip}}</td>
+                        <td  style="display: none;">{{form.device}} </td>
+                    </tr>
+                    <tr>
+                        <td class="text-left"> <strong>Vehicle No:</strong></td>
+                        <td>{{object.ticket.vehicle_no}}</td>
+                        <td style="display: none;">{{form.ticket}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="100" class="text-center"><strong>Order Details</strong></td>
+                    </tr>
+                    <tr>
+                        <td  class="text-left"><strong>50kg Quantity:</strong></td>
+                        <td>{{form.order_50}}</td>
+                        <td  class="text-left"><strong>25kg Quantity:</strong></td>
+                        <td>{{form.order_25}}</td>
+                    </tr>
+                    <tr>
+                        <td  class="text-left"><strong>20kg Quantity:</strong></td>
+                        <td>{{form.order_20}}</td>
+                        <td  class="text-left"><strong>6kg Quantity:</strong></td>
+                        <td>{{form.order_6}}</td>
+                    </tr>
+                    <tr style="display: none !important;">
+                        <td colspan="4">{{form.is_running}}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <input id="countersubmit" class="btn btn-success" {% if object.is_running %} type=" " onclick="updateCounterError()" {% else %}  type="submit" {% endif %} value="submit" style="max-width: 80px !important;padding: 6px !important; margin-left: 5px !important; border-radius: 5px !important; float: left;"/> 
+        </form>
+    </div>     
+</div>
+    
+{% endblock %}

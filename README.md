@@ -1,1 +1,3 @@
-# RefineryApp
+# rfnapp
+
+Gongoni refinery data logging app

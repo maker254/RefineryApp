@@ -1,0 +1,18 @@
+{% extends 'layouts/base_new.html' %} {% block content %}
+{% load crispy_forms_tags %}
+{% block title %}{% endblock %}
+<div class="container-fluid" >
+    <form method="post" style="margin-top: 55px;">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        <div class="form-group text-left" id="login-form" style="margin-left:20px !important; font-size: 1rem;">
+            <h5 for="{{ form.username.id_for_label }}">Login to Plant</h5>
+            <p>Username: {{ form.username }} </p>
+            <p>Password: {{ form.password }}</p>
+            {{ form.username.errors }}
+            {{ form.password.errors }}
+            <button class="btn btn-success btn-form" type="submit" style="margin-top: 0px !important; margin-left: 2px;">Login</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

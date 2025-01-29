@@ -1,0 +1,273 @@
+{% extends "layouts/base-new-1.html" %}
+{% block content %}
+
+<script>
+   $(document).ready( function () {
+        getCOAdetails();
+    });
+
+    function getCOAdetails(){   
+        console.log("attempting autocomplete");
+        $("#batch-search").autocomplete({
+        source: "{% url 'lab:coas-autocomplete' %}",
+        autoFocus: true,
+        select: function(event, ui) {
+            $(event.target).val(ui.item.value);
+            $.getJSON("{% url 'lab:get-coa-details' %}?code=" + ui.item.value, null,
+            function(data){
+                console.log(typeof(data.sampling_date));
+                $('#batch-no-header').html(data.batch_no);
+                $('#sample-header').html(data.brand);
+                $('#sampling-date-header').html(data.sampling_date);
+
+                $('#sample').html(data.sample);
+                $('#brand').html(data.brand);
+                $('#sampling-date').html(data.sampling_date);
+                $('#analysis-date').html(data.analysis_date);
+                $('#manufacture-date').html(data.manufacture_date);
+                $('#expiry-date').html(data.expiry_date);
+                $('#batch-no').html(data.batch_no);
+                $('#sodium-chloride').html(data.sodium_chloride);
+                $('#calcium').html(data.calcium);
+                $('#magnesium').html(data.magnesium);
+                $('#sulphates').html(data.sulphates);
+                $('#alkalinity').html(data.alkalinity);
+                $('#iodine').html(data.iodine);
+                $('#insoluble-matter').html(data.insoluble_matter);
+                $('#moisture').html(data.moisture_content);
+                $('#sieve-size').html(data.sieve_size);
+                $('#sodium-chloride-eas').html(data.sodium_chloride_eas);
+                $('#calcium-eas').html(data.calcium_eas);
+                $('#magnesium-eas').html(data.magnesium_eas);
+                $('#sulphates-eas').html(data.sulphates_eas);
+                $('#alkalinity-eas').html(data.alkalinity_eas);
+                $('#iodine-eas').html(data.iodine_eas);
+                $('#insoluble-matter-eas').html(data.insoluble_matter_eas);
+                $('#moisture-eas').html(data.moisture_content_eas);
+                });
+            return false;
+            }
+        });
+    }
+
+    function checkEASpecs(){
+        var brand_name = ($('#id_brand').val()) ?? (document.getElementById("brand").innerHTML);  //use Nullish coalescing operator      
+        if (brand_name.trim() == "BAKERY FINE SALT" || brand_name == 3){   //trim() removes all the leading and trailing Space from string
+           //console.log("Bakery finesalt");
+            $('#eas').toggleClass('hide-onprint');
+            $('#sodium-chloride-eas').toggleClass('hide-onprint');
+            $('#calcium-eas').toggleClass('hide-onprint');
+            $('#magnesium-eas').toggleClass('hide-onprint');
+            $('#sulphates-eas').toggleClass('hide-onprint');
+            $('#alkalinity-eas').toggleClass('hide-onprint');
+            $('#iodine-eas').toggleClass('hide-onprint');
+            $('#insoluble-matter-eas').toggleClass('hide-onprint');
+            $('#moisture-eas').toggleClass('hide-onprint');
+            $('#sieve-size-eas').toggleClass('hide-onprint');
+            console.log("Toggle hide on print");
+        }
+    }
+</script>
+
+<div class="container-fluid">
+    <div class="col-lg-12">
+        <page size="A4" style="margin: auto !important; display:block; height:10.5in ; width: 8.2in;" >
+        <div class="coa-search-form">
+            <h4> Print Certificate</h4>
+        </div>
+        
+        <div id="print-area" style="display:block; height:10.5in ; width: 8.2in; margin-top: 10px ; background-color: white; box-shadow:0 0 0.5cm  rgba(0,0,0,0.5);">  
+            <div style="position: relative !important; max-width:20% !important; margin-top: 5px!important; margin-left:655px !important;">
+                <div class="coa-search-form">
+                    <form method="post" action="" >
+                        {% csrf_token %}
+                        <p>
+                            <input type="text" placeholder="Search" id="batch-search" style = "text-align: center; height: 1.5rem !important; font-size: 0.8rem !important; background-color: white;border: 0.4px solid #464c53!important; border-radius: 0.15rem !important;" oninput="getCOAdetails()" onchange="getCOAdetails()" />
+                        </p>
+                    </form>
+                </div >
+            </div>
+                
+            <h3 class="text-center"> <b>KRYSTALLINE SALT LTD</b></h3>
+            <h5 class="text-center"> P.O BOX 63, GONGONI</h5>
+            <h4 class="text-center">DEPARTMENT OF QUALITY CONTROL </h4>
+            <h4 class="text-center"> <b>CERTIFICATE OF ANALYSIS </b></h4>
+            
+            <table  class="table-md table-bordered table-hover table-minimal" style="min-width: 95%; margin: auto;">
+                <tbody>
+                    <tr>
+                        <td class="info text-left" style="font-size: 1.5em; font-weight:300; min-width:32% !important;" >Sample</td> 
+                        <td id="sample" style="min-width:68%; text-align: left; font-size: 1.3em;" > {{object.sample}}</td>
+                    </tr>
+                    <tr>
+                        <td class="info text-left" style="font-size: 1.5em; font-weight:300; width:32% !important;" >Brand Name</td> 
+                        <td id="brand" style="text-align: left; font-size: 1.3em;" > {{object.brand}} </td>
+                    </tr>
+                    <tr >
+                        <td class="info text-left" style="font-size: 1.5em; font-weight:300;">Date of Sampling </td> 
+                        <td id="sampling-date" style="text-align: left; font-size: 1.3em;" >{{object.sampling_date|date:"Y-m-d"}} </td>
+                    </tr>
+                    <tr>
+                        <td class="info text-left" style="font-size: 1.5em; font-weight:300;">Date of Analysis</td> 
+                        <td id="analysis-date" style="text-align: left; font-size: 1.3em;" > {{object.analysis_date|date:"Y-m-d"}} </td>
+                    </tr>
+                    <tr class="hide-onprint" id="manf-date">
+                        <td class="info text-left" style="font-size: 1.5em; font-weight:300;">Date of Manufacturing </td> 
+                        <td id="manufacture-date" style="text-align: left; font-size: 1.3em;"> </td>
+                    </tr>
+                    <tr class="hide-onprint" id="exp-date">
+                        <td class="info text-left" style="font-size: 1.5em; font-weight:300;">Date of Expiry </td> 
+                        <td  id="expiry-date" style="text-align: left; font-size: 1.3em;"></td>
+                    </tr>
+                    <tr>
+                        <td class="info text-left" style="font-size: 1.5em; font-weight:300;">Batch No </td> 
+                        <td id="batch-no" style="text-align: left; font-size: 1.3em;">{{object.batch_no}}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div style="margin-top: 50px !important;">
+            <table class="table-sm table-bordered text-nowrap" style="width:95%; text-align: center; margin:auto; font-size: 1.3em;" >
+                <tbody> 
+                    <tr class="info">
+                        <th>SI No.</th>
+                        <th>Parameters</th>
+                        <th>Results</th>
+                        <th id="eas">E.A.S Specification</th>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td style="text-align: left;">Moisture Content % by mass</td>
+                        <td id="moisture"> {{object.moisture}} </td>
+                        <td id="moisture-eas"> {{object.eas.moisture|floatformat:"0"}}Max </td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td style="text-align: left;">Chloride as NaCl % by mass</td>
+                        <td id="sodium-chloride" >{{object.chloride}}</td> 
+                        <td id="sodium-chloride-eas"> {{object.eas.chloride|floatformat:"0"}}Min </td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td style="text-align: left;">Calcium as Ca++ % by mass</td>
+                        <td id="calcium"> {{object.calcium}} </td>
+                        <td id="calcium-eas"> {{object.eas.calcium|floatformat:"2"}}Max </td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td style="text-align: left;">Magnesium as Mg++ % by mass</td>
+                        <td id="magnesium" > {{object.magnesium}} </td>
+                        <td id="magnesium-eas"> {{object.eas.magnesium|floatformat:"2"}}Max </td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td style="text-align: left;">Sulphates as S04- % by mass</td>
+                        <td id="sulphates">{{object.sulphates}} </td>
+                        <td id="sulphates-eas"> {{object.eas.sulphates|floatformat:"2"}}Max </td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td style="text-align: left;">Alkalinity as Na2CO3  % by mass</td>
+                        <td id="alkalinity"> {{object.alkalinity}} </td>
+                        <td id="alkalinity-eas"> {{object.eas.alkalinity|floatformat:"2"}}Max </td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td style="text-align: left;">Water Insoluble matter(IR) % by mass</td>
+                        <td id="insoluble-matter"> {{object.insoluble_matter}} </td>
+                        <td id="insoluble-matter-eas"> {{object.eas.insoluble_matter|floatformat:"2"}}Max </td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td style="text-align: left;">Iodine mg/Kg</td>
+                        <td id="iodine"> {{object.iodine}} </td>
+                        <td id="iodine-eas"> 30mg/Kg(Min) - 60mg/Kg(Max) </td>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td style="text-align: left;">Sieve Size (-1mm)</td>
+                        <td id="sieve-size"> {{object.sieve_size}} </td>
+                        <td id="sieve-size-eas"> At least 85% of product shall pass through </td>
+                    </tr>
+                </tbody>
+            </table> 
+        
+        </div>
+            <div style="margin-top: 50px !important; ">
+                <table style="width:95%; margin:auto;">
+                    &nbsp;
+                    <tfoot>
+                        <tr style=" font-size: 1.2em;" >
+                            <td class="text-right" style="vertical-align: top !important; font-weight: 600;">Caveat:</td>
+                            <td colspan="3" class="text-left" >This certificate is issued on the basis of information available from our Quality Control Department with the authority as at the certificate date mentioned above. The Company reserves the right to withdraw the certificate if necessary.</td>
+                            
+                        </tr>
+                    
+                        <tr style=" font-size: 1.2em;">
+                            <td class="text-right" style="vertical-align: top !important; font-weight: 600;">Disclaimer:</td>
+                            <td colspan="3" class="text-left" >This certificate is system generated and therefore does not require signature. You may confirm validity of this certificate by contacting us through: TEL:041-2226425 / 2226443 / 2314393 </td>
+                            
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <div id="button-area" style="margin-top: 11.5px !important;">
+                <table style="border: none !important; margin: auto;">
+                    <tbody>
+                        <tr>
+                            <td colspan="100" style="text-align: center !important; ">
+                                <a class="btn btn-primary btn-form" style="color: white;" onclick="printCOA()"> Print </a>
+                                <a class="btn btn-danger btn-form"   href="{% url 'lab:coa-list' %}" > Cancel </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div> 
+        </page>  
+        
+    </div>
+</div>
+
+<script>
+    function printCOA(){
+        
+        var samplingDate = $('#id_sampling_date').val() ?? (document.getElementById("sampling-date").innerHTML); //use Null coalescing operator
+        
+        samplingDate = samplingDate.replaceAll('-','/');
+
+        const months = ['January','February','March','April','May','June','July','August','September','October','November','December']
+
+        let manufacture_date = new Date(samplingDate);
+        var manufacturemonthName = months[manufacture_date.getMonth()];
+
+        $('#manufacture-date').html( String(manufacturemonthName) +" " + String(manufacture_date.getFullYear()));
+
+        let no_of_months = 35;
+        let expiry_date = new Date( manufacture_date.setMonth(manufacture_date.getMonth() + no_of_months));
+        var expirymonthName = months[expiry_date.getMonth()];
+        console.log(expirymonthName);
+
+        $('#expiry-date').html( String(expirymonthName) +" "+ String(expiry_date.getFullYear()));
+
+        //Dynamically change filename of printout i.e .pdf perfix
+        var docTitle = document.title;
+        var batchNo = document.getElementById("batch-no").innerHTML;
+        var brandName = document.getElementById("brand").innerHTML;
+        document.title = String(batchNo) + "-" + String(brandName);
+
+        $('#manf-date').toggleClass('hide-onprint');
+        $('#exp-date').toggleClass('hide-onprint');
+        checkEASpecs();
+        window.print();
+        checkEASpecs();
+        $('#manf-date').toggleClass('hide-onprint');
+        $('#exp-date').toggleClass('hide-onprint');
+
+        console.log("end");
+        
+        //change back title of document after printing
+        document.title = docTitle;
+    }
+</script>
+
+{% endblock %}

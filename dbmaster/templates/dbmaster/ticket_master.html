@@ -1,0 +1,32 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block content %}
+    <table class="table table-sm table-bordered  table-striped table-hover text-nowrap" style="min-width: 840px !important;">
+        <thead class="thead-light">
+            <tr>
+                <th>Vehicle No</th>
+                <th>Trailor No</th>
+                <th>Buisness Partner</th>
+                <th>has_order</th>
+                <th>has_order_time</th>
+                <th>loaded</th>
+                <th>loaded_time</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in data %}
+            <tr>
+                <td>{{item.vehicle_no}}</td>
+                <td>{{item.trailer_no}}</td>
+                <td>{{item.bp_name}}</td>
+                <td>{{item.has_order}}</td>
+                <td>{{item.has_order_time}}</td>
+                <td>{{item.loaded}}</td>
+                <td>{{item.loaded_time}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

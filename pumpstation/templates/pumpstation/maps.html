@@ -1,0 +1,286 @@
+{% extends "layouts/base_new.html"%}
+
+{% block content %}
+<script>
+    window.onload = function() {
+    
+    var pieChart = new CanvasJS.Chart("powerChartContainer", {
+        theme: "light1", // "light1", "light2", "dark1", "dark2"
+        exportEnabled: true,
+        animationEnabled: true,
+        title: {
+            text: "Power Consumption Share Aug 2023",
+            fontSize: 16,
+            fontWeight:"normal",
+
+        },
+        data: [{
+            type: "pie",
+            startAngle: 25,
+            //toolTipContent: "<b>{label}</b>: {y}%",
+            //showInLegend: "true",
+            //legendText: "{label}",
+            indexLabelFontSize: 15,
+            indexLabel: "{label} - {y}%",
+            dataPoints: [
+                { y: 51.08, label: "Kombeni BH" },
+                { y: 27.34, label: "Jangwani" },
+                { y: 10.62, label: "Kombeni PS" },
+                { y: 5.02, label: "Corner" },
+                { y: 4.07, label: "Kadegeni" },
+                { y: 1.85, label: "Lagoon" },
+            ]
+        }]
+    });
+
+    pieChart.render();
+
+    var columnChart = new CanvasJS.Chart("columChartContainer", {
+        animationEnabled: true,
+        exportEnabled: true,
+        title:{
+            text: "Running Hours",
+            fontSize: 16,
+            fontWeight:"normal",
+        },
+        axisY: {
+            title: "Month Running Hrs"
+        },
+        data: [{
+            type: "column",
+            yValueFormatString: "#,##0.## hours",
+            dataPoints:[
+            { x: 2, y: 15, label: "PM0650" },
+            { x: 3, y: 20, label: "PM0643" },
+            { x: 4, y: 25, label: "PM0675" },
+            { x: 5, y: 10, label: "PM0645" },
+            { x: 6, y: 30, label: "PM0646" },
+            { x: 7, y: 5, label: "PM0647" },
+            ]
+        }],
+        dataPointMaxWidth: 20,
+        axisY:{
+            interval: 2.5,
+            },
+    });
+
+    columnChart.render();
+    console.log("finished rendering chart")
+    
+    }
+</script>
+
+
+<div class="container-fluid">
+    <div class="col-lg-12" style="margin: 0px !important; ">
+        
+        <div style="margin-top: 5px !important;">
+            <div id="googleMap" style="width:100%; height:300px; margin: auto; margin-top: 58px !important; margin-left: 0px; border-radius: 0.2rem; "></div>
+            <div id="powerChartContainer" style="position:absolute; height: 270px; width: 45%; left:0px; top: 300px; z-index: -1;"></div>
+            <div id="columChartContainer" style="position:absolute; height: 270px; width: 30vw; margin-top: 7px; top:300px; right:  15px;" ></div>
+        </div>
+    </div>
+    
+</div>
+<script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
+<script>
+    function myMap() {
+        //locations
+        var plant = new google.maps.LatLng(-3.02902,40.14080);
+        var kadegeni = new google.maps.LatLng (-3.0156283,40.1476617);
+        var jangwani = new google.maps.LatLng(-3.0304845,40.1574182);
+        var lagoon = new google.maps.LatLng(-3.0406854,40.1449019);
+        var kombeni = new google.maps.LatLng(-3.0075079,40.1465849);
+        var kombeniPS = new google.maps.LatLng(-3.0064374,40.1508938);
+        var corner = new google.maps.LatLng(-3.020282,40.144375);
+        
+
+        var car = "M-1.547 12l6.563-6.609-1.406-1.406-5.156 5.203-2.063-2.109-1.406 1.406zM0 0q2.906 0 4.945 2.039t2.039 4.945q0 1.453-0.727 3.328t-1.758 3.516-2.039 3.070-1.711 2.273l-0.75 0.797q-0.281-0.328-0.75-0.867t-1.688-2.156-2.133-3.141-1.664-3.445-0.75-3.375q0-2.906 2.039-4.945t4.945-2.039z";
+
+        var icon = {
+            path: car,
+            scale: 1,
+            strokeColor: '#404040',
+            strokeWeight: .10,
+            fillOpacity: 1,
+            fillColor: '#FF0000',
+            offset: '5%',
+            anchor: new google.maps.Point(0, 0) 
+        };
+
+        var svgMarker = {
+            path: "M-1.547 12l6.563-6.609-1.406-1.406-5.156 5.203-2.063-2.109-1.406 1.406zM0 0q2.906 0 4.945 2.039t2.039 4.945q0 1.453-0.727 3.328t-1.758 3.516-2.039 3.070-1.711 2.273l-0.75 0.797q-0.281-0.328-0.75-0.867t-1.688-2.156-2.133-3.141-1.664-3.445-0.75-3.375q0-2.906 2.039-4.945t4.945-2.039z",
+            fillColor: "darkblue",
+            fillOpacity: 0.6,
+            strokeWeight: 0,
+            rotation: 0,
+            scale: 1,
+            anchor: new google.maps.Point(0, 20),
+        }
+    
+        console.log("map properties");
+        //set map properties
+        var mapProperties = {
+            center:plant,
+            zoom:12.1,
+            //mapTypeId: google.maps.MapTypeId.ROADMAP,
+        };
+
+        //create new map instamce in sppecified html id with specified properties
+        var map = new google.maps.Map(document.getElementById("googleMap"),mapProperties);
+
+        //markers
+        kadegeniMarker = new google.maps.Marker({
+            map: map,
+            //draggable: true,
+            //animation: google.maps.Animation.DROP,
+            position: kadegeni,
+            label: "kadegeni",
+            icon: icon,
+            //icon: '/static/images/pump-icon.ico',
+        });
+
+        jangwaniMarker = new google.maps.Marker({
+            map: map,
+            position:jangwani,
+            title: "jangwani",
+            label: "jangwani",
+            icon: icon,
+        });
+        lagoonMarker = new google.maps.Marker({
+            map: map,
+            position: lagoon,
+            title: "lagoon",
+            label: "lagoon",
+            icon: icon,
+        });
+        kombeniPSMarker = new google.maps.Marker({
+            map: map,
+            position: kombeniPS,
+            title:"kombeni ps",
+            label: "kombeni ps",
+            icon: icon,
+        });
+
+        cornerMarker = new google.maps.Marker({
+            map:map,
+            position: corner,
+            title: "Corner",
+            label: "corner",
+            icon: icon,
+        });
+        
+        kombeniMarker = new google.maps.Marker({
+            map: map,
+            position: kombeni,
+            label: "kombeni bh",
+            icon: icon,
+        });
+        
+        //set markers onto map   
+        setTimeout(kadegeniMarker.setMap(map),1);
+        setTimeout(jangwaniMarker.setMap(map),1);
+        setTimeout(lagoonMarker.setMap(map),1);
+        setTimeout(kombeniMarker.setMap(map),1);
+
+        var kombeniInfo = new google.maps.InfoWindow({
+            content:'<strong><u>Kombeni Boreholes</u></strong>' + '<li class="text-left">PM0650: 16553.40 hrs</li>' + '<li class="text-left">PM0643: 16500.10 hrs</li>' + '<li class="text-left">PM0675: 9432.40 hrs</li>' + '<li class="text-left">PM0645: 15294.30 hrs</li>'+
+                    '<li class="text-left">PM0646: 14848.20 hrs</li>' + '<li class="text-left">PM0647: 2990.01 hrs</li>' + '<li class="text-left">PM0649: 15027.10 hrs</li>' + '<li class="text-left">PM0651: 10918.30 hrs</li>' + 
+                    '<li class="text-left">PM0723: 2265.70 hrs</li>' + '<li class="text-left">PM0722: 4305.80 hrs</li>' + '<li class="text-left">PM0721: 1150.70 hrs</li>' + '<li class="text-left">PM0720: 3764.40 hrs</li>' 
+        });
+
+        var cornerInfo = new google.maps.InfoWindow({
+            content:'<strong><u>Corner PS4</u></strong>'+'<li class="text-left">PM0648: 4520.10 hrs</li>' + '<li class="text-left">PM0644: 17564.1 hrs</li>' + '<li class="text-left">PM0693: 2345.60 hrs</li>' + '<li class="text-left">PM0325: 1775.29 hrs</li>',
+        });
+
+        var kadegeniInfo = new google.maps.InfoWindow({
+            content:'<strong><u>Kadegeni PS1</u></strong>'+'<li class="text-left">PM0624: 14538.88 hrs</li>' + '<li class="text-left">PM0316: 7748.67 hrs</li>' ,
+        });
+
+        var kombeniPSInfo = new google.maps.InfoWindow({
+            content:'<strong><u>Kombeni PS</u></strong>'+'<li class="text-left">PM0315: 11409.53 hrs</li>',
+        });
+
+        var jangwaniInfo = new google.maps.InfoWindow({
+            content:'<strong><u>Jangwani PS2</u></strong>'+'<li class="text-left">PM0320: 20321.93 hrs</li>' + '<li class="text-left">PM0321: 11212.86 hrs</li>',
+        });
+
+        var lagoonInfo = new google.maps.InfoWindow({
+            content:'<strong><u>Lagoon PS3</u></strong>'+'<li class="text-left">PM0323: 1265.82 hrs</li>' + '<li class="text-left">PM0317: 18014.46 hrs</li>',
+        });
+
+        kombeniMarker.addListener("click", () => {
+            console.log("clicked");
+            kombeniInfo.open({
+                anchor: kombeniMarker,
+                map,
+            });
+        });
+        kombeniMarker.addListener("mouseout", () => {
+            kombeniInfo.close();
+        });
+
+        cornerMarker.addListener("click", () => {
+            console.log("clicked");
+            cornerInfo.open({
+                anchor: cornerMarker,
+                map,
+            });
+        });
+        cornerMarker.addListener("mouseout", () => {
+            cornerInfo.close();
+        });
+
+        kadegeniMarker.addListener("click", () => {
+            console.log("clicked");
+            kadegeniInfo.open({
+                anchor: kadegeniMarker,
+                map,
+            });
+        });
+        kadegeniMarker.addListener("mouseout", () => {
+            kadegeniInfo.close();
+        });
+
+        kombeniPSMarker.addListener("click", () => {
+            console.log("clicked");
+            kombeniPSInfo.open({
+                anchor: kombeniPSMarker,
+                map,
+            });
+        });
+        kombeniPSMarker.addListener("mouseout", () => {
+            kombeniPSInfo.close();
+        });
+
+        jangwaniMarker.addListener("click", () => {
+            console.log("clicked");
+            jangwaniInfo.open({
+                anchor: jangwaniMarker,
+                map,
+            });
+        });
+        jangwaniMarker.addListener("mouseout", () => {
+            jangwaniInfo.close();
+        });
+
+        lagoonMarker.addListener("click", () => {
+            console.log("clicked");
+            lagoonInfo.open({
+                anchor: lagoonMarker,
+                map,
+            });
+        });
+        lagoonMarker.addListener("mouseout", () => {
+            lagoonInfo.close();
+        });
+
+    }
+</script>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBydFYaps2a-R6FCUCrsYqdD2ePHG_Df44&callback=myMap"></script>
+
+
+
+
+{% endblock %}

@@ -1,0 +1,209 @@
+{% load static %}
+{% load tz %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href= "{% static 'css/sidebar.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/rfnapp.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui.structure.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui.theme.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/font-awesome/css/font-awesome.min.css'%}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-ui.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <script type="text/javascript" src="{% static 'js/jquery-3.4.1.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/bootstrap.min.js'%}"></script>
+    <script type="text/javascript" src="{% static 'js/labapp.js'%}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery-ui.min.js'%}"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+
+    {% block page-scripts %}
+  
+    {% endblock %}
+
+    <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}" />
+    <title>{% block title %}
+    Refinery  - {{ request.resolver_match.app_name }}
+   {% endblock %}</title>
+    {% block stylesheet %}{% endblock %}
+</head>
+<body  class="text-center" style="margin: 20px 0px 10px 0px; font-size:12px; min-height: 90vh !important; line-height: 1.5 !important; "> <!-- background-image: url('{% static "images/kaysalt-premium.jpeg"%}'); background-size: 300px 200px ; background-repeat:no-repeat;  background-position-x:center; background-position-y:40%;" >  background-color:#f8f9fa !important;-->
+  {{STATIC_URL}}
+  <nav class="navbar navbar-expand-lg navbar-light bg-light  fixed-top nav-hide" style="margin-left: 0px !important;" >
+
+    {% block menu-btn %}
+      <div class="menu-btn" style="font-size: 20px !important;">
+        <i class="fa fa-bars"></i>
+      </div>
+      {% endblock %}
+      <div class="search" style="margin-left: 100px !important;">
+        <label style="margin:auto !important;">
+          <input type="text" placeholder="  Search here" style="border:0.2px solid #fff; border-radius: 10px !important; width: 200px !important; height: 27px !important"/>
+          <i class="fa fa-search"></i>
+        </label>
+      </div>
+    <ul class="navbar-nav ml-auto mt-lg-0">
+      {% if user.is_authenticated %}
+      <li class="nav-item dropdown top-nav-login">
+          
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            {{ user.username }} <i class="fa fa-user"></i> 
+          </a>
+          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+              <a class="dropdown-item" href="{% url 'password_change'%}">Change Password</a>
+          </div>
+      </li>
+      {% else %}
+      <li class="nav-item active top-nav-login" >
+          <a class="nav-link" href="{% url 'login' %}" >Login</a>
+      </li>
+      {% endif %}
+      <!-- /#Authentication Links -->
+      </ul>
+      
+    </ul>
+    
+</nav>
+<div class="sidebar-menu nav-hide">
+  <div class="project-title" style="position: fixed; top: 6px;">
+    <a class="navbar-brand text-left" href="{% url 'home' %}" style="font-weight: bold; margin-left: 5px !important;" >  
+      <span style="font-size: 1.4rem; color: #2f2382;"> Kaysalt Plant </span>
+      <img src="{% static 'images/favicon.ico' %}" width="30" height="30" alt="" style="margin-top: -6px !important;">
+    </a>
+  </div>
+  <div class="menu-list" style="margin-top: 55px !important;">
+      <li>
+        <a href="{% url 'home' %}" ><i class="fa fa-home"></i>&nbsp;Home</a>
+      </li>
+    {% for  menu, submenus in menulist.items %}
+    <!--style="border-top:0.2px solid #dee2e6 !important;"-->
+    <li  data-target="#{{menu.menu_id}}" class="collapsed" > <a href="#"> <i class="{{submenus|last}}"></i> &nbsp;{{menu.menu_name}}&nbsp; <!--<i class="fa fa-caret-down" style="font-size: 13px !important; margin-top: 0px !important;"></i> --></a></li>
+        <div  id="{{menu.menu_id}}">
+            <ul class="treeview-menu nav navbar-nav side-nav">
+            {% for values in submenus %}
+            {% if values.sub_menu_name is not None %}
+            <li ><a href="/{{values.application_name}}/{{values.url}}" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{values.sub_menu_name}}</a></li>
+            {% endif %}
+          {%endfor %}
+            </ul>
+      </div>
+    {% endfor %}
+    <li>
+      <a href="/admin" target="_blank" ><i class="fa fa-dashboard "></i>&nbsp;&nbsp;Dash Board</a>
+    </li>
+    <li id="side-nav-login"> 
+      {% if user.is_authenticated %}
+        <a class="dropdown-item" href="{% url 'logout' %}"> <i class="fa fa-user "></i> Logout</a>
+      {% else %}
+        <a class="nav-link" href="{% url 'login' %}"> <i class="fa fa-user "></i> Login</a>
+      {% endif %}
+    </li>      
+  </div>
+</div>
+
+<div class="main-content">
+{% include "includes/messages.html" %}
+
+{% block content %}
+
+
+
+
+
+{% endblock %}
+
+
+{% block extrascripts %}
+
+{% endblock %}
+<!--script that allows use of arrow keys to navigate table form input-->
+<script type="text/javascript">
+  $(document).ready(function () {
+      const Width = window.innerWidth;
+      var width = parseInt(Width);
+      if (width <= 768) {
+        console.log(`Screen Width: ${width}`);
+        $('.main-content').css('margin-left', '0px');        
+      }
+
+      //jquery to toggle/hide sidebar
+      $('.close-btn').click(function(){
+        const Width = window.innerWidth;
+        var width = parseInt(Width);
+        if (width > 768) {
+          console.log('close button clicked ');
+          $('.sidebar-menu').addClass('hide-sidebar');
+          console.log('sidebar hidden');
+          $('.menu-btn').css('visibility', 'visible');
+          console.log('menubar visible')
+          $('.main-content').css('margin-left', '10px');
+          console.log('main-content responsive');
+          $('.close-btn').css('visibility', 'hidden');
+        }
+        else {
+          $('.sidebar-menu').addClass('hide-sidebar');
+          $('.menu-btn').css('visibility', 'visible');
+          $('.main-content').css('margin-left', '0px');
+          $('.close-btn').css('visibility', 'hidden');
+          $('.tableFixHead').css('margin', 'auto');
+        }
+      });
+      $('.menu-btn').click(function(){
+        const Width = window.innerWidth;
+        var width = parseInt(Width);
+        if (width > 768) {
+          $('.sidebar-menu').removeClass('hide-sidebar');
+          $('.menu-btn').css('visibility', 'hidden');
+          $('.close-btn').css('visibility', 'visible')
+          $('.main-content').css('margin-left', '217px');
+        }
+        else {
+          $('.sidebar-menu').removeClass('hide-sidebar');
+          $('.menu-btn').css('visibility', 'hidden');
+          $('.close-btn').css('visibility', 'visible');
+          $('.main-content').css('margin-left', '0px');
+        }
+      });  
+
+  });
+</script>
+
+<script type="text/javascript">
+    
+  function showTime(){
+    console.log('we are here');
+    var date = new Date();
+    var h = date.getHours(); 
+    var m = date.getMinutes(); 
+    var s = date.getSeconds(); 
+    console.log(date);
+    var session = "AM";
+    
+    if(h == 0){
+        h = 12;
+    }
+    
+    if(h > 12){
+        h = h - 12;
+        session = "PM";
+    }
+    
+    h = (h < 10) ? "0" + h : h;
+    m = (m < 10) ? "0" + m : m;
+    s = (s < 10) ? "0" + s : s;
+    
+    var time = h + ":" + m + ":" + s + " " + session;
+    console.log(time);
+    $("#DigitalCLOCK").html(time) ;
+    console.log('the end');
+    
+    setTimeout(showTime, 1000);
+  }
+</script>
+
+</body>
+</html>

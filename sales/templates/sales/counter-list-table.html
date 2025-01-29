@@ -1,0 +1,211 @@
+{% extends "layouts/base-new-1.html" %}
+{% load static %}
+
+{% block page-scripts %}
+<script type="text/javascript" src="{% static 'js/loading.js'%}"></script>
+{% endblock %}
+
+{% block content %}
+<script type="text/javascript">
+    $(document).ready(function(){
+        showTime();
+    })
+
+    function checkCounterInitialState(pk){
+        if($('#my-toggle-'+pk).val() == 'True'){
+                $("#my-toggle-"+pk).prop("checked", true);
+                $('.toggle-label').css("transition", "All 0s ease");
+                $('.toggle-handle').css("transition", "All 0s ease");
+            }
+    }
+</script>
+
+<div class="container-fluid">
+    <div class="col-lg-12" style="margin: 0px !important;">
+        
+        <div id="counter-table-div" style="margin-top: 55px !important;">
+            <h5 class="text-center" style="margin:auto;" >Counter States as at,  <span id="DigitalCLOCK" class="clock" > </span></h5> 
+            <div style=" margin-top: 5px !important;border: 0px solid #d8dce4 !important; border-radius: 5px !important; max-width: 1000px !important; margin: auto;">
+                <table class="table table-sm table-bordered  table-striped table-hover text-nowrap" style="font-size: 0.85rem !important;  margin-bottom: 0px !important; padding: 2px !important;" >
+                    <thead class="thead-light">
+                        <tr style="line-height: 0.9rem !important; font-size: 0.9rem !important;" >
+                            <th  style="width: 10px !important;">Gate No.</th>
+                            <th  style="min-width:100px !important ">Device</th>
+                            <th  style="min-width:100px !important; ">Ticket</th>
+                            <th colspan="1" style="min-width: 100px !important; ">50kg bags </th>
+                            <th colspan="1" style="min-width: 100px !important; ">25kg bags</th>
+                            <th colspan="1" style="min-width: 100px !important; ">20kg bales</th>
+                            <th colspan="1" style="min-width: 100px !important; "> 6kg bales</th>
+                            <th style="min-width: 100px !important; ">Loaded Qty (kg)</th>
+                            {% if user.is_superuser %}
+                            <th style="width: 30px !important; "> Belt Status</th>
+                            <th style="width: 30px !important;">Close</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>  
+                        {% for item in object_list %}
+                        <tr style="vertical-align: middle !important; line-height: 0.9rem !important;" >
+                            <td class="text-center" style="font-weight: 400; " ><a href="{% url 'sales:counter-update' item.pk %}"> {{ forloop.counter }}</a> </td>
+                            <td style="font-weight: 400;"> <a href="{% url 'sales:counter-update' item.pk %}">{{item.device.ip}} </a></td>
+                            <td class="text-center" style="font-weight: 400; "> <a href="{% url 'sales:counter-update' item.pk %}"> {% if item.closed %} - {% else %} {{item.ticket}} {% endif %} </a></td>
+                          <!--  <td class="text-center" style="font-weight: 400; padding-top: 0.9rem !important;"><a href="">{{item.order.quantity}} </a></td> -->
+                    
+                            <td class="text-center" style="font-weight: 400; " id="50-live-count">
+                                {% if item.closed %} - {% else %} <span id="50kg-count-{{item.device.location.conveyor_code}}" style="color: rgb(6, 71, 191);"></span>&nbsp; {% endif %}
+                                {% if item.closed %} - {% else %} <span id="50kg-count-{{item.pk}}" style="color: rgb(6, 71, 191);"></span>&nbsp; {% endif %}
+                            </td>
+                            <td class="text-center" style="font-weight: 400;  display: none;" id="50-live-total">
+                                {% if item.closed %} - {% else %} <span id="50kg-tweight-{{item.pk}}" style="color: rgb(6, 71, 191);"> </span> {% endif %}
+                            </td>
+
+                            <td class="text-center" style="font-weight: 400;" id="25-live-count"> 
+                                {% if item.closed %} - {% else %} <span id="25kg-count-{{item.pk}}" style="color: rgb(6, 71, 191);"></span> {% endif %} 
+                            </td>
+                            <td class="text-center" style="font-weight: 400;  display: none;" id="25-live-total"> 
+                                {% if item.closed %} - {% else %} <span id="25kg-tweight-{{item.pk}}" style="color: rgb(6, 71, 191);"> </span>{% endif %}
+                            </td>
+
+                            <td class="text-center" style="font-weight: 400;  " id="20-live-count"> 
+                                {% if item.closed %} - {% else %} <span id="20kg-count-{{item.pk}}" style="color: rgb(6, 71, 191);"></span> {% endif %}
+                            </td>
+                            <td class="text-center" style="font-weight: 400;  display: none;" id="20-live-total"> 
+                                {% if item.closed %} - {% else %} <span id="20kg-tweight-{{item.pk}}" style="color: rgb(6, 71, 191)"> </span>{% endif %}
+                            </td>
+
+                            <td class="text-center" style="font-weight: 400; " id="6-live-count"> 
+                                {% if item.closed %} - {% else %} <span id="6kg-count-{{item.pk}}" style="color: rgb(6, 71, 191)"></span> {% endif %}
+                            </td>
+                            <td class="text-center" style="font-weight: 400;  display: none;" id="6-live-total"> 
+                                {% if item.closed %} - {% else %} <span id="6kg-tweight-{{item.pk}}" style="color: rgb(6, 71, 191)"> </span> {% endif %}
+                            </td>
+
+                            <td class="text-center" style="font-weight: 400; " > 
+                                {% if item.closed %} - {% else %} <span id="counter-total-{{item.pk}}" style="color: rgb(6, 71, 191)"> </span> {% endif %}
+                            </td>
+                            
+                            {% if user.is_superuser %}
+                            <td  class="text-center" style="font-weight: 400; max-width: 10px!important;" colspan="1">
+                                {% if item.closed %} 
+                                <span style="color: green;">Available</span>
+                                {% else %}
+                                <label class="toggle" id="on-off-toggle">
+                                    <input id="my-toggle-{{item.id}}" class="toggle-input" type="checkbox" value="{{item.is_running}}" onclick="setCounter({{item.id}})" onload="checkCounterInitialState({{item.id}}) "/>
+                                    <span class="toggle-label" data-off="OFF" data-on="ON" ></span>
+                                    <span class="toggle-handle"></span> 
+                                </label>
+                                <script type="text/javascript">
+                                    $(function(){checkCounterInitialState("{{item.id}}"); });
+                                </script>
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                <form action="{% url 'sales:counter-delete' item.id %}" method="post">
+                                    {% csrf_token %}
+                                    <input id="counterdelete" class="btn btn-warning"{% if object.is_running %} type=" " {% else %} type="submit" {% endif %} value="close" style="max-width: 50px !important; padding: 2px !important; border-radius: 5px !important; font-size: small;"/>
+                                </form>
+                            </td>
+                            {% endif %}
+                            
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="13">Toggle Belt Status button to Enable Loading/Packing i.e START/STOP Conveyors</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div> 
+        
+        {% if user.is_superuser %}
+        <form method="post" action="{% url 'sales:set-counter' %} " >
+        {% csrf_token %}
+        {{form.errors}}
+        <div class="table-responsive" style="font-size: 15px !important; margin-top: 30px !important;">
+            <table class="table table-sm table-bordered text-nowrap" style="max-width:870px !important ; line-height: 1.5; text-align: left; margin: auto !important;">
+                <tbody>
+                    <tr>
+                        <td class="text-center" colspan="100">Loading Plan</td>
+                    </tr>
+                    <tr  style="font-weight: bold !important;">
+                        <td class="text-center">Gate No:</td>
+                        <td class="text-center">Vehicle No:</td>
+                        <td class="text-center">50kg Quantity:</td>
+                        <td class="text-center">25kg Quantity:</td>
+                        <td class="text-center">20kg Quantity:</td>
+                        <td class="text-center">6kg Quantity:</td>
+                        <td style="display: none !important;">Status</td>
+                        
+                    </tr>
+                    <tr>
+                        <td>{{form.device}}</td>
+                        <td>{{form.ticket}}</td>
+                        <td>{{form.order_50}}</td>
+                        <td>{{form.order_25}}</td>
+                        <td>{{form.order_20}}</td>
+                        <td>{{form.order_6}}</td>
+                        <td style="display: none !important;">{{form.closed}}</td>
+                        <td style="display: none !important;">{{form.is_running}}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-center" colspan="100">
+                            <input  class="btn btn-success"  type="submit" value="Set Counter" style="max-width: 100px !important;padding: 2px !important; margin-left: 5px !important; border-radius: 5px !important;"/>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        </form>  
+        {% endif %}
+    </div>     
+</div>
+
+<script type="text/javascript">
+
+    function setCounter(pk){
+        console.log("attempting ajax request");
+        var toggleState = "OFF";
+        if ($('#my-toggle-'+pk).is(":checked")){
+            toggleState = "ON";
+        }
+        var defaultUrl = "{% url 'sales:start-counter' 1 %}";
+        var dynamicUrl = defaultUrl.replace('1',pk);
+        console.log(dynamicUrl);
+        $.ajax({
+            type: 'GET',
+            url: dynamicUrl, 
+            dataType:"json",
+            data: {
+                'toggleState':toggleState
+                },
+            success: function (data) {
+                console.log(data[0].is_running);
+                if (data[0].is_running == null){
+                    console.log("data is null");
+                    //change togglestate back to initial state
+                    if (toggleState == "ON"){
+                        $("#my-toggle-"+pk).prop("checked", false);
+                    }
+                    if (toggleState == "OFF"){
+                        $("#my-toggle-"+pk).prop("checked", true);
+                    }
+                    alert("!!!Communication Error!!!"); 
+                }
+                // if not valid user, alert the user
+                // if(!response["valid"]){
+                //     alert("GATE Counter Started");
+                // }
+            },
+            error: function (response) {
+                console.log(response);
+                alert("!!Request Failed!!");
+                
+            }
+        }) 
+    }
+</script>
+    
+{% endblock %}

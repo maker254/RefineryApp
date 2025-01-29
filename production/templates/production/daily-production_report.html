@@ -1,0 +1,93 @@
+{% extends "layouts/base.html" %}
+{% block  content %}
+<div class="container-fluid" >
+    <div class="col-lg-12" style="margin: 0px !important;">
+        <div class="main-inner-content"  > 
+            <h4 class="text-left" style="margin-left: 270px !important;">Daily Report {{date}} </h4> 
+            <div class="tableFixHead"> 
+                <table class="table table-sm table-bordered  table-striped table-hover rounded-corners " style="border-collapse: collapse !important; margin: auto;font-size:0.85rem !important; line-height: 0.88rem !important;"> <!--max-width: 100% !important;-->
+                <thead class="thead-light thead-sticky" >
+                    <tr style="font-size: 1.1em; line-height: 0.8rem !important; " >
+                        <th colspan="2" style="color: #007bff !important;">Date</th>
+                        <th colspan="2" style="color: #007bff !important;">50kg</th>
+                        <th colspan="2" style="color: #007bff !important;">25kg</th>
+                        <th colspan="2" style="color: #007bff !important;">20kg</th>
+                        <th colspan="2" style="color: #007bff !important;">6kg</th>
+                        <th colspan="2" style="color: #007bff !important;">Hour</th>
+                    </tr>
+                
+                </thead>
+                <tbody>
+                    <tr class="tbody-sticky" style="background-color: rgba(0,0,0,.05) !important;">
+                        <th colspan="2">{{date}}</th>
+                        <th>No. Bales</th>
+                        <th>Weight(kg)</th>
+                        <th>No. Bales</th>
+                        <th>Weight(kg)</th>
+                        <th>No. Bales</th>
+                        <th>Weight(kg)</th>
+                        <th>No. Bales</th>
+                        <th>Weight(kg)</th>
+                        <th colspan="2"> Total(kg) </th>
+                    </tr>
+                    {% for detail in details %}
+                    <tr>
+                        {% for key, value in detail.items %}
+                        <td colspan="2" style="font-weight: 0 !important;">{{key}}</td>
+                            {% for item in value.0 %}
+                                {% for k, v in item.items %}
+                                    {% for x in v%}
+                                    <td>{{x}}</td>
+                                    {% endfor %}
+                                {% endfor %}
+                            {% endfor %}
+                            <td colspan="2" style="font-weight: 400;">{{value.1}}</td>
+                        {% endfor %}
+                        
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot  class="tfoot-sticky" style="color: #094381 !important; background-color: #dee2e6;">
+                    <tr>
+                        <td colspan="10" class="text-right">{{date}} Loading Total &nbsp;</td>
+                        <!-- <td id="daily-50-count"></td>
+                        <td id="daily-50-tweight"></td>
+                        <td id="daily-25-count"></td>
+                        <td id="daily-25-tweight"></td>
+                        <td id="daily-20-count"></td>
+                        <td id="daily-20-tweight"></td>
+                        <td id="daily-6-count"></td>
+                        <td id="daily-6-tweight"></td> -->
+                        <td id="daily-tweight-total"> {{dailyWeightTotal}}</td>
+                    </tr>
+                </tfoot>
+                </table>
+            </div>
+        </div>
+        <div class="right-bar-nav">
+            <div id="dateform">
+                <form method="post" action=" "  >
+                    {% csrf_token %}
+                    <table style="border: 0px solid; border-radius: 2px !important; width: 100% !important;">
+                        <tr>
+                            <td class="text-right" style="font-weight: 300;">Date: </td>
+                            <td>{{form.date}} </td>
+                            <td><input class="btn btn-success" type="submit" value="submit" name="submit" style="border-radius: 3px !important; line-height: 0.7rem !important;" /></td>   
+                        </tr>
+                    </table>
+                </form>
+            </div>
+        
+            <div id="gate-nav" style="margin-top: 20px !important;">
+                <span style="margin-left:0px !important; width: 100%; font-weight: 300; font-size: 0.9rem;">Device &nbsp; &nbsp;</span>
+                <li  style="margin-left:0px !important; width: 100%; line-height: 1.8rem !important;">Gate 1</li>
+                <li  style="margin-left:0px !important; width: 100%; line-height: 1.8rem !important;">Gate 2</li>
+                <li  style="margin-left:0px !important; width: 100%; line-height: 1.8rem !important;">Gate 3</li>
+                <li  style="margin-left:0px !important; width: 100%; line-height: 1.8rem !important;">Gate 4</li>
+                <li  style="margin-left:0px !important; width: 100%; line-height: 1.8rem !important;"><a href="">Gate 5</a></li>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

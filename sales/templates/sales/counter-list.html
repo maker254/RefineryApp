@@ -1,0 +1,126 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block page-scripts %}
+<script type="text/javascript" src="{% static 'js/loading.js'%}"></script>
+{% endblock %}
+
+{% block content %}
+<script type="text/javascript">
+    $(document).ready(function(){
+        for (var i =0; i < 6; i++){
+            //console.log("my-toggle-"+(i+1));
+            if($('#my-toggle-'+(i+1)).val() == 'True'){
+                $("#my-toggle-"+(i+1)).prop("checked", true);
+                $('.toggle-label').css("transition", "All 0s ease");
+                $('.toggle-handle').css("transition", "All 0s ease");
+            }
+        }
+    })
+</script>
+
+<div class="container-fluid">
+    <div class="col-lg-12" style="margin: 0px !important;">
+        <h4 class="text-left" style="margin-top: 0px !important;  margin-left: 10px !important ;" >Counters</h4>
+        <div>
+            {% for item in object_list %}
+            <div style="width: 235px !important; margin-bottom: 15px !important;  margin-top: 0px !important; margin-left: 20px !important ; float: left !important; border: 1px solid #dee2e6 !important; border-radius: 20px !important; background-color: white; box-shadow:0 0 0.5cm  rgba(0,0,0,0.5);"> 
+                <table class="table table-sm table-bordered text-nowrap" style="width: 235px !important;font-size:0.8rem !important; border: hidden !important; line-height: 1rem !important; font-size: 0.8rem !important;" >
+                    <tbody>  
+                        <tr>
+                            <td class="text-center" style="font-weight: 400;" colspan="4">Gate:<a href=""> {{item.id}}</a> </td>
+                        </tr>
+                        <tr>
+                            <td class="text-center" style="font-weight: 400;" colspan="4">Device: <a href="{% url 'sales:counter-update' item.pk %}">{{item}} </a></td>
+                        </tr>
+                        <tr>
+                            <td class="text-center" style="font-weight: 400;" colspan="4"> Vehicle No:<a href=""> {{item.order.ticket}} </a>&nbsp; Qty: <a href="">{{item.order.quantity}} </a>tonnes </td>
+                        </tr>
+                        <tr>
+                            <td class="text-center" style="font-weight: 400;" colspan="2">Category</td> 
+                            <td class="text-center" style="font-weight: 400;">Bale cnt</td>
+                            <td class="text-center" style="font-weight: 400;">Weight(kg)</td>
+                        </tr>
+                        <tr>
+                            <td class="text-center" style="font-weight: 400;" colspan="2">50kg</td>
+                            <td class="text-center" id="50-live-count"> <span id="50kg-count-{{item.id}}" style="color: darkgreen;"></span></td>
+                            <td class="text-center" id="50-live-total"> <span id="50kg-tweight-{{item.id}}" style="color: darkgreen;"> </span></td>
+                        </tr>
+                        <tr>
+                            <td class="text-center" style="font-weight: 400;" colspan="2">25kg</td>
+                            <td class="text-center" id="25-live-count"> <span id="25kg-count-{{item.id}}" style="color: darkgreen;"></span> </td>
+                            <td class="text-center" id="25-live-total"> <span id="25kg-tweight-{{item.id}}" style="color: darkgreen;"> </span></td>
+                        </tr>
+                        <tr>
+                            <td class="text-center" style="font-weight: 400;" colspan="2">20kg</td>
+                            <td class="text-center" id="20-live-count"> <span id="20kg-count-{{item.id}}" style="color: darkgreen;"></span> </td>
+                            <td class="text-center" id="20-live-total"> <span id="20kg-tweight-{{item.id}}" style="color: darkgreen;"> </span> </td>
+                        </tr>
+                        <tr>
+                            <td class="text-center" style="font-weight: 400;" colspan="2"> 6kg</td>
+                            <td class="text-center" id="6-live-count"> <span id="6kg-count-{{item.id}}" style="color: darkgreen;"></span> </td>
+                            <td class="text-center" id="6-live-total"> <span id="6kg-tweight-{{item.id}}" style="color: darkgreen;"> </span> </td>
+                        </tr>
+                        <tr>
+                            <td  class="text-center" style="font-weight: 400;" colspan="4">
+                                <label class="toggle" id="on-off-toggle">
+                                    <input id="my-toggle-{{item.id}}" class="toggle-input" type="checkbox" value="{{item.is_running}}" onclick="setCounter({{item.id}})" />
+                                    <span class="toggle-label" data-off="OFF" data-on="ON" ></span>
+                                    <span class="toggle-handle"></span> 
+                                </label>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            {% endfor %}
+        </div>   
+    </div>     
+</div>
+
+<script type="text/javascript">
+   
+    function setCounter(pk){
+        console.log("attempting ajax request");
+        var toggleState = "OFF";
+        if ($('#my-toggle-'+pk).is(":checked")){
+            toggleState = "ON";
+        }
+
+        var defaultUrl = "{% url 'sales:start-counter' 1 %}";
+        var dynamicUrl = defaultUrl.replace('1',pk);
+        console.log(dynamicUrl);
+        $.ajax({
+            type: 'GET',
+            url: dynamicUrl, 
+            dataType:"json",
+            data: {
+                'toggleState':toggleState
+                },
+            success: function (data) {
+                console.log(data[0].is_running);
+                if (data[0].is_running == null){
+                    //change togglestate back to initial state
+                    if (toggleState == "ON"){
+                        $("#my-toggle-"+pk).prop("checked", false);
+                    }
+                    if (toggleState == "OFF"){
+                        $("#my-toggle-"+pk).prop("checked", true);
+                    }
+                    alert("!!!Communication Error!!!"); 
+                }
+                // if not valid user, alert the user
+                // if(!response["valid"]){
+                //     alert("GATE Counter Started");
+                // }
+            },
+            error: function (response) {
+                console.log(response);
+                alert("!!Request Failed!!");
+                
+            }
+        }) 
+    }
+</script>
+    
+{% endblock %}

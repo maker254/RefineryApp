@@ -1,0 +1,111 @@
+{% extends "layouts/base.html" %}
+{% block  content %}
+<div class="container-fluid">
+   <h4>Daily Report </h4> 
+   <table class="table table-sm table-bordered table-lighthead table-striped table-hover" style="min-width: 740px !important; margin: auto; border-collapse: collapse !important; font-size:0.8rem !important; line-height: 0.85rem !important; ">
+    <thead>
+        <tr style="font-size: 1rem; color: blue; line-height: 0.85rem !important;" >
+            <th style="min-width: 120px !important; width: 130px !important;"> 
+                <table class="nested-table" style="width:100% !important; height:100% !important; margin: 0px !important;"> 
+                
+                    <tr>
+                        <td colspan="2" style="background-color:  #f8f9fa  !important;">{{date}}</td>
+                    </tr>
+                    <tr style="border-collapse: collapse !important; font-size: 0.9rem;">
+                        <td colspan="2">Time</td>
+                        
+                    </tr>
+                </table>
+            </th>
+            <th colspan="2" style="min-width: 110px !important; width: 110px !important;">
+            <table class="nested-table" style="width:100% !important; height:100% !important; margin: 0px !important;"> 
+                
+                <tr>
+                    <td colspan="2" style="background-color:  #f8f9fa  !important;">50Kg</td>
+                </tr>
+                <tr style="border-collapse: collapse !important; font-size: 0.9rem;">
+                    <td>No.of Bags</td>
+                    <td>T-Weight</td>
+                </tr>
+            </table>
+            </th>
+            <th colspan="2" style="min-width: 110px !important; width: 110px !important;">
+                <table class="nested-table" style="width:100% !important; height:100% !important; margin: 0px !important;"> 
+                    <tr>
+                        <td colspan="2" style="background-color:  #f8f9fa  !important;">25Kg</td>
+                    </tr>
+                    <tr style="border-collapse: collapse !important; font-size: 0.9rem;">
+                        <td>No.of Bales</td>
+                        <td>T-Weight</td>
+                    </tr>
+                </table>
+            </th>
+            <th colspan="2" style="min-width: 110px !important; width: 110px !important;">
+                <table class="nested-table" style="width:100% !important; height:100% !important; margin: 0px !important;"> 
+                    <tr>
+                        <td colspan="2" style="background-color:  #f8f9fa  !important;">20Kg</td>
+                    </tr>
+                    <tr style="border-collapse: collapse !important; font-size: 0.9rem;">
+                        <td>No.of Bales</td>
+                        <td>T-Weight</td>
+                    </tr>
+                </table>
+            </th>
+            <th colspan="2" style="min-width: 110px !important; width: 110px !important;" >
+                <table class="nested-table" style="width:100% !important; height:100% !important; margin: 0px !important;"> 
+                    <tr>
+                        <td colspan="2" style="background-color:  #f8f9fa  !important;">6Kg</td>
+                    </tr>
+                    <tr style="border-collapse: collapse !important; font-size: 0.9rem; ">
+                        <td>No.of Bales</td>
+                        <td>T-Weight</td>
+                    </tr>
+                </table>
+            </th>
+            <th colspan="2" style="min-width: 110px !important; width: 110px !important;" > 
+                <table class="nested-table" style="width:100% !important; height:100% !important; margin: 0px !important;"> 
+                    <tr>
+                        <td colspan="2" style="background-color:  #f8f9fa  !important;"> Hour</td>
+                    </tr>
+                    <tr style="border-collapse: collapse !important; ">
+                        <td colspan="2">Total</td>
+                    </tr>
+                </table>
+            </th>
+        </tr>
+    </thead>
+    <tbody style="font-size: 0.9rem !important;">
+        {% for detail in details %}
+        <tr>
+            {% for key, value in detail.items %}
+            <td>{{key}}</td>
+                {% for item in value.0 %}
+                    {% for k, v in item.items %}
+                        {% for x in v%}
+                        <td>{{x}}</td>
+                        {% endfor %}
+                    {% endfor %}
+                {% endfor %}
+                <td colspan="2">{{value.1}}</td>
+            {% endfor %}
+            
+        </tr>
+        {% endfor %}
+        <tr>
+            <td colspan="9" class="text-right">{{date}}  Daily Production Total &nbsp;</td>
+            <!-- <td id="daily-50-count"></td>
+            <td id="daily-50-tweight"></td>
+            <td id="daily-25-count"></td>
+            <td id="daily-25-tweight"></td>
+            <td id="daily-20-count"></td>
+            <td id="daily-20-tweight"></td>
+            <td id="daily-6-count"></td>
+            <td id="daily-6-tweight"></td> -->
+            <td id="daily-tweight-total"> {{dailyWeightTotal}}</td>
+        </tr>
+    </tbody>
+   </table>
+   </ul>
+</div>
+
+{% endblock %}

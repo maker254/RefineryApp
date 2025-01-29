@@ -1,0 +1,105 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block page-scripts %}
+<script type="text/javascript" src="{% static 'js/loading.js'%}"></script>
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+    <div class="col-lg-12" style="margin: 0px !important;">
+            <h4 class="text-left" style="margin-top: 50px !important;">Set Counter</h4>
+            <form method="post" action="" >
+            {% csrf_token %}
+            {{form.errors}}
+            <div class="table-responsive" style="font-size: 16px !important; margin-top: 12px !important;">
+                <table class="table table-sm table-borderless text-nowrap" style="max-width: 70% !important; line-height: 1.5; text-align: left;">
+                    <tbody>
+                        <tr>
+                            <td  class="text-left"><strong>Gate No:</strong></td>
+                            <td>{{form.device}} </td>
+                        </tr>
+                        <tr>
+                            <td class="text-left"> <strong>Vehicle No:</strong></td>
+                            <td>{{form.ticket}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="100" class="text-center"><strong>Order Details</strong></td>
+                        </tr>
+                        <tr>
+                            <td  class="text-left"><strong>50kg Quantity:</strong></td>
+                            <td>{{form.order_50}}</td>
+                            <td  class="text-left"><strong>25kg Quantity:</strong></td>
+                            <td>{{form.order_25}}</td>
+                        </tr>
+                        <tr>
+                            <td  class="text-left"><strong>20kg Quantity:</strong></td>
+                            <td>{{form.order_20}}</td>
+                            <td  class="text-left"><strong>6kg Quantity:</strong></td>
+                            <td>{{form.order_6}}</td>
+                        </tr>
+                        
+                    </tbody>
+                </table>
+            </div>
+            <input id="countercreate" class="btn btn-success" type="submit" value="submit" style="max-width: 80px !important; padding: 6px !important; margin-left: 5px !important; border-radius: 5px !important; float: left;"/>
+            <!-- <div style="float: left !important; margin-top: 10px !important;"> 
+                <table class="table table-sm table-bordered text-nowrap" style="font-size:0.9rem !important;" >
+                    <tbody> 
+                        <tr >
+                            <td class="text-center" style="font-weight: 400;" colspan="4">{{form.device}} </td>
+                        </tr>
+                        <tr style="display:none !important;">
+                            <td class="text-center" style="font-weight: 400;" colspan="4">{{form.is_running}} </td>
+                        </tr>
+                        <tr>
+                            <td class="text-center" style="font-weight: 400;" colspan="4">Gate No: 5 </td>
+                        </tr>
+                        <tr>
+                            <td class="text-center" style="font-weight: 400;" colspan="3"> Vehicle No: {{form.ticket}}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-center" style="font-weight: 400;" colspan="2" >Order Qty: {{form.quantity}}</td>
+                            <td class="text-center" style="font-weight: 400;" colspan="2">Loaded (tonnes)</td>
+                        </tr>
+                        <tr>
+                            <td class="text-center" style="font-weight: 400;" >Category</td> 
+                            <td class="text-center" style="font-weight: 400;">Target</td>
+                            <td class="text-center" style="font-weight: 400;">No. of Bales</td>
+                            <td class="text-center" style="font-weight: 400;">Weight(kg)</td>
+                        </tr>
+                        <tr>
+                            <td class="text-center" style="font-weight: 400;">50kg</td>
+                            <td class="text-center">{{form.order_50}} </td>
+                            <td class="text-center" id="50-live-count"> <span id="50kg-count" style="color: darkgreen;"></span></td>
+                            <td class="text-center" id="50-live-total"> <span id="50kg-tweight" style="color: darkgreen;"> </span></td>
+                        </tr>
+                        <tr>
+                            <td class="text-center" style="font-weight: 400;">25kg</td>
+                            <td class="text-center"> {{form.order_25}}</td>
+                            <td class="text-center" id="25-live-count"> <span id="25kg-count" style="color: darkgreen;"></span> </td>
+                            <td class="text-center" id="25-live-total"> <span id="25kg-tweight" style="color: darkgreen;"> </span></td>
+                        </tr>
+                        <tr>
+                            <td class="text-center" style="font-weight: 400;">20kg</td>
+                            <td class="text-center"> {{form.order_20}}</td>
+                            <td class="text-center" id="20-live-count"> <span id="20kg-count" style="color: darkgreen;"></span> </td>
+                            <td class="text-center" id="20-live-total"> <span id="20kg-tweight" style="color: darkgreen;"> </span> </td>
+                        </tr>
+                        <tr>
+                            <td class="text-center" style="font-weight: 400;"> 6kg</td>
+                            <td class="text-center"> {{form.order_6}} </td>
+                            <td class="text-center" id="6-live-count"> <span id="6kg-count" style="color: darkgreen;"></span> </td>
+                            <td class="text-center" id="6-live-total"> <span id="6kg-tweight" style="color: darkgreen;"> </span> </td>
+                        </tr>
+                        <tr>
+                            <td colspan="4"> <input class="btn btn-success btn-form" type="submit" name="submit" value="ADD" style="border-radius: 2.5px !important; " /></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div> -->
+            </form>
+    </div>     
+</div>
+    
+{% endblock %}
